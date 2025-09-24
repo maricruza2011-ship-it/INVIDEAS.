@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>INVIDEAS - Seguimiento de Ideas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #eef2f3;
+      padding: 20px;
+    }
+    .panel {
+      display: none;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .active {
+      display: block;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      background-color: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    input {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Panel 1: Bienvenida -->
+  <div id="panel1" class="panel active">
+    <h2>💡 INVIDEAS</h2>
+    <p>¡Bienvenida, Maribel! Este sistema te permite registrar, consultar y dar seguimiento a tus ideas de innovación en INVIAS. Tu creatividad es el motor del cambio.</p>
+    <button onclick="showPanel('panel2')">Continuar</button>
+    <button onclick="alert('Sesión cerrada')">Cerrar</button>
+  </div>
+
+  <!-- Panel 2: Menú principal -->
+  <div id="panel2" class="panel">
+    <h2>¿Qué deseas hacer hoy?</h2>
+    <p>Selecciona una opción para continuar. Si no deseas registrar una idea, puedes volver al inicio.</p>
+    <button onclick="showPanel('panel3')">Registrar una idea</button>
+    <button onclick="showPanel('panel4')">Consultar estado</button>
+    <button onclick="showPanel('panel5')">Modificar idea</button>
+    <button onclick="showPanel('panel6')">Actualizar estado</button>
+    <button onclick="showPanel('panel1')">Volver al inicio</button>
+  </div>
+
+  <!-- Panel 3: Registro de idea -->
+  <div id="panel3" class="panel">
+    <h2>Registrar Idea</h2>
+    <form onsubmit="registrarIdea(event)">
+      <input type="text" id="nombre" placeholder="Nombre" required>
+      <input type="email" id="correo" placeholder="Correo" required>
+      <input type="tel" id="telefono" placeholder="Teléfono" required>
+      <input type="text" id="dependencia" placeholder="Dependencia" required>
+      <button type="submit">Registrar Idea</button>
+    </form>
+    <button onclick="showPanel('panel2')">Volver al Menú</button>
+  </div>
+
+  <!-- Panel 4: Consultar estado -->
+  <div id="panel4" class="panel">
+    <h2>Consultar Estado</h2>
+    <form onsubmit="consultarEstado(event)">
+      <input type="text" id="consultaID" placeholder="Número de registro (ID-XXXX)" required>
+      <button type="submit">Consultar</button>
+    </form>
+    <button onclick="showPanel('panel2')">Volver al Menú</button>
+  </div>
+
+  <!-- Panel 5: Modificar idea -->
+  <div id="panel5" class="panel">
+    <h2>Modificar Idea Registrada</h2>
+    <form onsubmit="modificarIdea(event)">
+      <input type="text" id="modID" placeholder="Número de registro (ID-XXXX)" required>
+      <input type="text" id="modNombre" placeholder="Nuevo nombre">
+      <input type="email" id="modCorreo" placeholder="Nuevo correo">
+      <input type="tel" id="modTelefono" placeholder="Nuevo teléfono">
+      <input type="text" id="modDependencia" placeholder="Nueva dependencia">
+      <button type="submit">Guardar Cambios</button>
+    </form>
+    <button onclick="showPanel('panel2')">Volver al Menú</button>
+  </div>
+
+  <!-- Panel 6: Actualizar estado -->
+  <div id="panel6" class="panel">
+    <h2>Actualizar Estado de la Idea</h2>
+    <form onsubmit="actualizarEstado(event)">
+      <input type="text" id="actualizarID" placeholder="Número de registro (ID-XXXX)" required>
+      <input type="text" id="nuevoEstado" placeholder="Nuevo estado (Ej: Aprobada)" required>
+      <button type="submit">Actualizar Estado</button>
+    </form>
+    <button onclick="showPanel('panel2')">Volver al Menú</button>
+  </div>
+
+  <script>
+    const ideas = {};
+
+    function showPanel(id) {
+      document.querySelectorAll('.panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+    }
+
+    function generarRegistro() {
+      const num = Math.floor(1000 + Math.random() * 9000); // 4 cifras
+      return 'ID-' + num;
+    }
+
+    function registrarIdea(event) {
+      event.preventDefault();
+      const nombre = document.getElementById('nombre').value;
+      const correo = document.getElementById('correo').value;
+      const telefono = document.getElementById('telefono').value;
+      const dependencia = document.getElementById('dependencia').value;
+      const id = generarRegistro();
+
+      ideas[id] = {
+        nombre,
+        correo,
+        telefono,
+        dependencia,
+        estado: 'En revisión'
+      };
+
+      alert(`✅ Idea registrada exitosamente.\nNúmero de registro: ${id}`);
+      showPanel('panel2');
+    }
+
+    function consultarEstado(event) {
+      event.preventDefault();
+      const id = document.getElementById('consultaID').value.trim();
+      if (ideas[id]) {
+        alert(`📌 Estado de la idea ${id}: ${ideas[id].estado}`);
+      } else {
+        alert('❌ No se encontró ninguna idea con ese número de registro.');
+      }
+    }
+
+    function modificarIdea(event) {
+      event.preventDefault();
+      const id = document.getElementById('modID').value.trim();
+      if (ideas[id]) {
+        const nuevoNombre = document.getElementById('modNombre').value;
+        const nuevoCorreo = document.getElementById('modCorreo').value;
+        const nuevoTelefono = document.getElementById('modTelefono').value;
+        const nuevaDependencia = document.getElementById('modDependencia').value;
+
+        if (nuevoNombre) ideas[id].nombre = nuevoNombre;
+        if (nuevoCorreo) ideas[id].correo = nuevoCorreo;
+        if (nuevoTelefono) ideas[id].telefono = nuevoTelefono;
+        if (nuevaDependencia) ideas[id].dependencia = nuevaDependencia;
+
+        alert(`✏️ La idea ${id} ha sido modificada exitosamente.`);
+      } else {
+        alert('❌ Número de registro no encontrado.');
+      }
+    }
+
+    function actualizarEstado(event) {
+      event.preventDefault();
+      const id = document.getElementById('actualizarID').value.trim();
+      const nuevoEstado = document.getElementById('nuevoEstado').value;
+      if (ideas[id]) {
+        ideas[id].estado = nuevoEstado;
+        alert(`🔔 La idea ${id} ha cambiado de estado a: ${nuevoEstado}`);
+      } else {
+        alert('❌ Número de registro no encontrado.');
+      }
+    }
+  </script>
+
+</body>
+</html>
